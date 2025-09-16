@@ -41,12 +41,15 @@ brew install gh jq
 # Ubuntu/Linux
 sudo apt install gh jq
 ```
-Usage
+
+---
+
+## Usage
 
 ```
 proneliner [options]
 ```
-Options
+## Options
 
 ```
 Option	      Description
@@ -56,7 +59,7 @@ Option	      Description
 -lr	          List saved reviewers
 -h	          Show help message
 ```
-Examples
+## Examples
 
 ```
 # Default usage (use saved reviewers, fallback to PR reviewers if none saved)
@@ -75,8 +78,8 @@ proneliner -rr user1
 proneliner -lr
 ```
 
-Example Output
-- If you run the script on a branch with a PR, it will output a single line like this:
+## Example Output
+If you run the script on a branch with a PR, it will output a single line like this:
 
 ```
 @reviewer1 @reviewer2 @author Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
@@ -87,7 +90,7 @@ Example Output
 - (+120/-20) — additions and deletions
 - https://github.com/yourcompany/repo/pull/42 — PR URL
 
-Reviewer Storage
+## Reviewer Storage
 Default reviewers are stored in:
 
 ```
@@ -95,7 +98,9 @@ $HOME/.proneliner_reviewers
 ```
 You can version-control this file or share it with your team by symlinking it to a shared repo.
 
-Notes
+---
+
+## Notes
 The script automatically creates the reviewers file if it doesn't exist.
 
 Reviewers are sorted alphabetically for neatness.
