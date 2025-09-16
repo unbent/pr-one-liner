@@ -2,7 +2,7 @@
 
 A small, easy-to-use script that outputs GitHub PR information in a single line, including reviewers, additions/deletions, and the PR URL. Perfect for quick reference in terminal or sharing with your team.
 
-Example: @reviewer1 @reviewer2 @author Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
+Example: @reviewer1 @reviewer2 Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
 
 ## License
 
@@ -82,7 +82,7 @@ proneliner -lr
 If you run the script on a branch with a PR, it will output a single line like this:
 
 ```
-@reviewer1 @reviewer2 @author Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
+@reviewer1 @reviewer2 Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
 ```
 - @reviewer1 @reviewer2 — the reviewers (from PR or saved defaults)
 - @author — the PR author

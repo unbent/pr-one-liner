@@ -29,7 +29,7 @@ show_help() {
 Usage: proneliner [options]
 
 Options:
-  -r               Uses saved reviewers if any
+  -r               Use reviewers from the GitHub PR (ignores saved defaults)
   -ar <names...>   Add one or more reviewers to the default reviewer file
   -rr <names...>   Remove one or more reviewers from the default reviewer file
   -lr              List saved reviewers
@@ -40,7 +40,7 @@ Reviewer storage:
     $REVIEWERS_FILE
 
 Examples:
-  proneliner                 # Uses saved reviewers if any
+  proneliner                 # Use reviewers from the GitHub PR (ignores saved defaults)
   proneliner -r              # Force using PR reviewers only
   proneliner -ar user1 user2 # Add user1 and user2 to default reviewers
   proneliner -rr user1       # Remove user1 from default reviewers
