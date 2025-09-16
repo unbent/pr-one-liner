@@ -29,7 +29,7 @@ show_help() {
 Usage: proneliner [options]
 
 Options:
-  -r               Uses saved reviwers if any
+  -r               Uses saved reviewers if any
   -ar <names...>   Add one or more reviewers to the default reviewer file
   -rr <names...>   Remove one or more reviewers from the default reviewer file
   -lr              List saved reviewers
@@ -139,4 +139,4 @@ elif [[ -s "$REVIEWERS_FILE" ]]; then
 fi
 
 # Format output
-echo "$REVIEWERS$TITLE (+$ADDITIONS/-$DELETIONS) $URL"
+echo -e "$REVIEWERS\n\n$TITLE (+$ADDITIONS/-$DELETIONS)\n$URL"
