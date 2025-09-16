@@ -76,7 +76,7 @@ proneliner -lr
 ```
 
 Example Output
-If you run the script on a branch with a PR, it will output a single line like this:
+- If you run the script on a branch with a PR, it will output a single line like this:
 
 ```
 @reviewer1 @reviewer2 @author Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
