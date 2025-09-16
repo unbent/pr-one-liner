@@ -45,13 +45,16 @@ Usage
 
 ```
 proneliner [options]
+```
 Options
-Option	Description
--r	Use reviewers from the GitHub PR (ignores saved defaults)
--ar <names>	Add one or more reviewers to the default reviewer file
--rr <names>	Remove one or more reviewers from the default reviewer file
--lr	List saved reviewers
--h	Show help message
+
+```
+Option	      Description
+-r	          Use reviewers from the GitHub PR (ignores saved defaults)
+-ar <names>	  Add one or more reviewers to the default reviewer file
+-rr <names>	  Remove one or more reviewers from the default reviewer file
+-lr	          List saved reviewers
+-h	          Show help message
 ```
 Examples
 
