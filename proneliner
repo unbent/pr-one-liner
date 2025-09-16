@@ -1,0 +1,142 @@
+#!/bin/bash
+set -e
+
+REVIEWERS_FILE="$HOME/.proneliner_reviewers"
+
+# Ensure the reviewers file exists
+mkdir -p "$(dirname "$REVIEWERS_FILE")"
+touch "$REVIEWERS_FILE"
+
+# Ensure GitHub CLI is installed
+if ! command -v gh &> /dev/null; then
+  echo "❌ GitHub CLI (gh) is not installed. Install it from https://cli.github.com/"
+  exit 1
+fi
+
+# Check for jq
+if ! command -v jq >/dev/null 2>&1; then
+  echo "❌ jq is not installed. Install it with 'brew install jq' (macOS) or 'sudo apt-get install jq' (Linux)."
+  exit 1
+fi
+
+# Flags
+USE_PR_REVIEWERS=false
+ADD_REVIEWERS=()
+REMOVE_REVIEWERS=()
+
+show_help() {
+  cat <<EOF
+Usage: proneliner [options]
+
+Options:
+  -r               Uses saved reviwers if any
+  -ar <names...>   Add one or more reviewers to the default reviewer file
+  -rr <names...>   Remove one or more reviewers from the default reviewer file
+  -lr              List saved reviewers
+  -h               Show this help message
+
+Reviewer storage:
+  Default reviewers are stored in:
+    $REVIEWERS_FILE
+
+Examples:
+  proneliner                 # Uses saved reviewers if any
+  proneliner -r              # Force using PR reviewers only
+  proneliner -ar user1 user2 # Add user1 and user2 to default reviewers
+  proneliner -rr user1       # Remove user1 from default reviewers
+  proneliner -lr             # List saved reviewers
+EOF
+}
+
+# Parse flags
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -r)
+      USE_PR_REVIEWERS=true
+      shift
+      ;;
+    -ar)
+      shift
+      while [[ $# -gt 0 && $1 != -* ]]; do
+        ADD_REVIEWERS+=("$1")
+        shift
+      done
+      ;;
+    -rr)
+      shift
+      while [[ $# -gt 0 && $1 != -* ]]; do
+        REMOVE_REVIEWERS+=("$1")
+        shift
+      done
+      ;;
+    -lr)
+      echo "📋 Saved reviewers:"
+      sort "$REVIEWERS_FILE" | uniq
+      exit 0
+      ;;
+    -h|--help)
+      show_help
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Use -h for help."
+      exit 1
+      ;;
+  esac
+done
+
+# Handle adding reviewers
+if [[ ${#ADD_REVIEWERS[@]} -gt 0 ]]; then
+  for reviewer in "${ADD_REVIEWERS[@]}"; do
+    if ! grep -qx "$reviewer" "$REVIEWERS_FILE"; then
+      echo "$reviewer" >> "$REVIEWERS_FILE"
+      echo "✅ Added reviewer: $reviewer"
+    else
+      echo "ℹ️ Reviewer '$reviewer' already saved"
+    fi
+  done
+  echo "📋 Current saved reviewers:"
+  sort "$REVIEWERS_FILE" | uniq
+  exit 0
+fi
+
+# Handle removing reviewers
+if [[ ${#REMOVE_REVIEWERS[@]} -gt 0 ]]; then
+  TMP_FILE=$(mktemp)
+  grep -vxF "${REMOVE_REVIEWERS[@]}" "$REVIEWERS_FILE" > "$TMP_FILE" || true
+  mv "$TMP_FILE" "$REVIEWERS_FILE"
+  for reviewer in "${REMOVE_REVIEWERS[@]}"; do
+    echo "🗑️ Removed reviewer: $reviewer"
+  done
+  echo "📋 Current saved reviewers:"
+  sort "$REVIEWERS_FILE" | uniq
+  exit 0
+fi
+
+# Get current branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Try to get PR for current branch
+PR_JSON=$(gh pr view "$BRANCH" --json title,url,author,additions,deletions,reviewRequests 2>/dev/null || true)
+
+if [ -z "$PR_JSON" ]; then
+  echo "❌ No PR exists for branch '$BRANCH'"
+  exit 1
+fi
+
+# Extract fields
+TITLE=$(echo "$PR_JSON" | jq -r '.title')
+URL=$(echo "$PR_JSON" | jq -r '.url')
+ADDITIONS=$(echo "$PR_JSON" | jq -r '.additions')
+DELETIONS=$(echo "$PR_JSON" | jq -r '.deletions')
+
+# Determine reviewers
+if $USE_PR_REVIEWERS; then
+  REVIEWERS=$(echo "$PR_JSON" | jq -r '.reviewRequests[].login' | sed 's/^/@/' | tr '\n' ' ')
+elif [[ -s "$REVIEWERS_FILE" ]]; then
+  REVIEWERS=$(sort "$REVIEWERS_FILE" | uniq | sed 's/^/@/' | tr '\n' ' ')
+fi
+
+# Format output
+echo "$REVIEWERS$TITLE (+$ADDITIONS/-$DELETIONS) $URL"
