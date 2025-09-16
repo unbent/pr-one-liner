@@ -85,7 +85,6 @@ If you run the script on a branch with a PR, it will output a single line like t
 @reviewer1 @reviewer2 Add new login feature (+120/-20) https://github.com/yourcompany/repo/pull/42
 ```
 - @reviewer1 @reviewer2 — the reviewers (from PR or saved defaults)
-- @author — the PR author
 - Add new login feature — the PR title
 - (+120/-20) — additions and deletions
 - https://github.com/yourcompany/repo/pull/42 — PR URL
